@@ -94,7 +94,7 @@ while True:
         elif key == ord('s'):
             stdscr.addstr(6, 10, "STOP 12")
             stop_all()
-        # Если клавиша "s" то выходим из программы
+        # Если клавиша "q" то выходим из программы
         elif key == ord('q'):
 	    # Восстановление прежних настроек терминала
             stdscr.keypad(0)
