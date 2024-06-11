@@ -5,30 +5,29 @@ import os
 import sys
 import curses
 import time
-import RPi.GPIO as GPIO
+import wiringpi
+from wiringpi import GPIO
 
-# Установим номера пинов GPIO, с которыми будем работать
-M1_RIGHT = 4
-M1_LEFT = 17
-M2_RIGHT = 27
-M2_LEFT = 22
+# Установим номера пинов GPIO  (orangepi 40pin gpio), с которыми будем работать
+M1_RIGHT = 19 #PA07
+M1_LEFT = 20 #PA08
+M2_RIGHT = 22 #PA09
+M2_LEFT = 23 #PA10
 
 # Функция для подготовки пинов GPIO
 def setup(*ports):
-    GPIO.cleanup()
-    # Режим именования пинов по названию, а не по номеру на плате 
-    GPIO.setmode(GPIO.BCM)
+    wiringpi.wiringPiSetup()
     for port in ports:
         # Установка пина на вывод + низкий уровень "0"
-        GPIO.setup(port, GPIO.OUT)
-        GPIO.output(port, GPIO.LOW)
+        wiringpi.pinMode(port, GPIO.OUTPUT)
+        wiringpi.digitalWrite(port, GPIO.LOW)
 
 # Функция для установки низкого уровня на всех пинах (выключение)
 def stop_all():
-    GPIO.output(M1_LEFT, GPIO.LOW)
-    GPIO.output(M1_RIGHT, GPIO.LOW)
-    GPIO.output(M2_LEFT, GPIO.LOW)
-    GPIO.output(M2_RIGHT, GPIO.LOW)
+    wiringpi.digitalWrite(M1_LEFT, GPIO.LOW)
+    wiringpi.digitalWrite(M1_RIGHT, GPIO.LOW)
+    wiringpi.digitalWrite(M2_LEFT, GPIO.LOW)
+    wiringpi.digitalWrite(M2_RIGHT, GPIO.LOW)
 
 # Функция для управления вращением движков
 def rotate(motor=1, mode='s'):
@@ -38,16 +37,16 @@ def rotate(motor=1, mode='s'):
     if motor == 1:
         if mode == 'r':
 	    # Устанавливаем высокий уровень на пине M1_RIGHT (4)
-            GPIO.output(M1_RIGHT, GPIO.HIGH)
+            wiringpi.digitalWrite(M1_RIGHT, GPIO.HIGH)
         elif mode == 'l':
 	    # Устанавливаем высокий уровень на пине M1_LEFT (17)
-            GPIO.output(M1_LEFT, GPIO.HIGH)
+            wiringpi.digitalWrite(M1_LEFT, GPIO.HIGH)
     # Для мотора 2
     elif motor == 2:
         if mode == 'r':
-            GPIO.output(M2_RIGHT, GPIO.HIGH)
+            wiringpi.digitalWrite(M2_RIGHT, GPIO.HIGH)
         elif mode == 'l':
-            GPIO.output(M2_LEFT, GPIO.HIGH)
+            wiringpi.digitalWrite(M2_LEFT, GPIO.HIGH)
 
 # Выполним инициализацию пинов GPIO
 setup(M1_RIGHT, M1_LEFT, M2_RIGHT, M2_LEFT)
